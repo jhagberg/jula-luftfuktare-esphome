@@ -1,0 +1,5 @@
+title: Jula-luftfuktare med ESPHome
+description: Byt styrkortet i en ultraljudsluftfuktare från Jula mot en ESP8266
+lang: sv
+theme: jekyll-theme-minimal
+exclude: [luftfuktare.yaml, luftfuktare-test.yaml, dimma.py, secrets.yaml]
