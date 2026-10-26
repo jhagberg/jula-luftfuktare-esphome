@@ -1,0 +1,110 @@
+# Home Assistant-dashboard "Svamptält Källaren". Klistra in via
+# Redigera dashboard → Råkonfigurationsredigerare, eller spara via websocket.
+title: Svamptält Källaren
+views:
+  - title: Tält
+    path: talt
+    icon: mdi:mushroom
+    type: sections
+    max_columns: 3
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Nu
+          - type: tile
+            entity: sensor.luftfuktare_temperatur
+            name: Temperatur
+          - type: tile
+            entity: sensor.luftfuktare_luftfuktighet
+            name: Luftfuktighet
+          - type: tile
+            entity: sensor.luftfuktare_dimma
+            name: Dimma
+          - type: tile
+            entity: binary_sensor.luftfuktare_varme
+            name: Värme
+          - type: markdown
+            content: "**Tanken är tom.** Fyll på vatten och tryck på *Tank påfylld*."
+            visibility:
+              - condition: state
+                entity: binary_sensor.luftfuktare_tank_tom
+                state: "on"
+          - type: tile
+            entity: button.luftfuktare_tank_pafylld
+            name: Tank påfylld
+            icon: mdi:water-plus
+            visibility:
+              - condition: state
+                entity: binary_sensor.luftfuktare_tank_tom
+                state: "on"
+      - type: grid
+        cards:
+          - type: heading
+            heading: Luftfuktighet
+          - type: tile
+            entity: switch.luftfuktare_automatisk_styrning
+            name: Automatik
+            features:
+              - type: toggle
+          - type: tile
+            entity: number.luftfuktare_mal_luftfuktighet
+            name: Mål
+            features:
+              - type: numeric-input
+                style: slider
+          - type: tile
+            entity: number.luftfuktare_manuell_dimma
+            name: Manuell dimma
+            features:
+              - type: numeric-input
+                style: slider
+            visibility:
+              - condition: state
+                entity: switch.luftfuktare_automatisk_styrning
+                state: "off"
+      - type: grid
+        cards:
+          - type: heading
+            heading: Värme
+          - type: tile
+            entity: switch.luftfuktare_varmestyrning
+            name: Värmestyrning
+            features:
+              - type: toggle
+          - type: tile
+            entity: number.luftfuktare_mal_temperatur
+            name: Mål
+            features:
+              - type: numeric-input
+                style: slider
+      - type: grid
+        column_span: 3
+        cards:
+          - type: heading
+            heading: Senaste dygnet
+          - type: history-graph
+            hours_to_show: 24
+            grid_options:
+              columns: full
+            entities:
+              - entity: sensor.luftfuktare_luftfuktighet
+                name: Luftfuktighet
+              - entity: sensor.luftfuktare_dimma
+                name: Dimma
+          - type: history-graph
+            hours_to_show: 24
+            grid_options:
+              columns: full
+            entities:
+              - entity: sensor.luftfuktare_temperatur
+                name: Temperatur
+          - type: history-graph
+            hours_to_show: 24
+            grid_options:
+              columns: full
+            entities:
+              - entity: binary_sensor.luftfuktare_varme
+                name: Värme
+              - entity: binary_sensor.luftfuktare_tank_tom
+                name: Tank tom

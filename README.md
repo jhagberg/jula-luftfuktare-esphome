@@ -146,6 +146,11 @@ fast IP i routern.
 | KS | givare | Rå återkoppling från luftfuktaren |
 | Kp, Ki | inställning | Regulatorns parametrar |
 
+[`ha-dashboard.yaml`](ha-dashboard.yaml) är en färdig dashboard med allt ovan
+och grafer för senaste dygnet. Klistra in den i råkonfigurationsredigeraren på
+en ny dashboard. Entitetsnamnen förutsätter att enheten heter `luftfuktare` i
+ESPHome.
+
 Alla mål och lägen sparas i flash och överlever strömavbrott. ESP8266 skriver
 till flash ungefär en gång i minuten, så en ändring precis före ett avbrott
 kan gå förlorad.
