@@ -134,7 +134,7 @@ fast IP i routern.
 | Entitet | Typ | Vad |
 |---|---|---|
 | Mål luftfuktighet | tal, 40–95 % | Vad regulatorn siktar på |
-| Mål temperatur | tal, 15–30 °C | Termostatens mål |
+| Mål temperatur | tal, 15–30 °C | Vad värmen siktar på |
 | Automatisk styrning | brytare | Av = dimman går på "Manuell dimma" |
 | Manuell dimma | tal, 0–80 % | Används när automatiken är av |
 | Värmestyrning | brytare | Av = värmen är alltid av |
@@ -184,16 +184,34 @@ sekunder ger god marginal.
 
 ## Värmen
 
-ESP:n är termostat med ±0,5 °C runt målet och skickar läget till Shellyn var
-30:e sekund över HTTP:
+Värmaren är en liten frostvakt från Biltema (cirka 210 W). Den värmer först upp
+sin egen kropp, så luften fortsätter bli varmare i 4–5 minuter efter att den
+stängts av. En vanlig termostat med ±0,5 °C gav därför 23,8–27,8 °C.
+
+ESP:n styr i stället med pulsbredd. Var tionde minut räknar en PI-regulator ut
+hur stor del av fönstret värmen ska gå (Kp 0,1 och Ki 0,02 per °C), och Shellyn
+får ett enda anrop:
 
 ```
-http://<shelly>/rpc/Switch.Set?id=0&on=true&toggle_after=90
+http://<shelly>/rpc/Switch.Set?id=0&on=true&toggle_after=<sekunder>
 ```
 
-Varje "på" har en egen avstängning efter 90 sekunder. Om ESP:n, wifi eller
-givaren slutar fungera slocknar värmen av sig själv. Kontrollera också att
-Shellyn är inställd på att vara av efter strömavbrott.
+Shellyn stänger alltså av sig själv när pulsen är slut. Om ESP:n, wifi eller
+givaren slutar fungera går värmen högst en puls (8 minuter) till. Pulser under
+30 sekunder hoppas över. Det blir cirka 140 starter per dygn, mot cirka 60 med
+termostaten, men varje start är kort.
+
+En puls är högst 80 % av fönstret. Utan taket gick värmen 10 minuter i sträck
+från 19,5 °C och tältet slog över till 30 °C. Integralen växer inte medan
+pulsen ligger i taket, så den lägger sig inte för högt under uppvärmningen.
+Taket gör att värmen orkar hålla 25 °C ner till en källare på cirka 10 °C.
+Integralen sparas inte, så efter en omstart i kyla tar det någon timme innan
+den har hittat rätt nivå igen.
+
+<!-- TODO: uppmätt intervall efter ett dygn med pulsstyrning -->
+
+Ställ frostvaktens egen termostat på max, och se till att Shellyn är av efter
+strömavbrott.
 
 ## Kända begränsningar
 

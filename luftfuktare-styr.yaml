@@ -25,7 +25,7 @@ ota:
   - platform: esphome
     password: !secret ota_password
 
-# Värmen: Shelly Plug S Gen3. Varje "på" får egen avstängning efter 90 s,
+# Värmen: Shelly Plug S Gen3. Varje puls skickas som "på, stäng själv efter X s",
 # så värmen slocknar av sig själv om ESP:n, wifi eller givaren dör.
 http_request:
   timeout: 3s
@@ -51,9 +51,12 @@ globals:
   - id: duty_now
     type: float
     initial_value: "0"
-  - id: heat_on
-    type: bool
-    initial_value: "false"
+  - id: heat_i
+    type: float
+    initial_value: "0.3"  # ungefär vad frostvakten behöver för att hålla 25 °C
+  - id: heat_s
+    type: float
+    initial_value: "0"
   - id: tank_tom
     type: bool
     restore_value: true  # låst tills "Tank påfylld" trycks, även efter strömavbrott
@@ -83,6 +86,13 @@ script:
     then:
       - delay: 30s
       - output.turn_off: fan_out
+  # Visar "Värme" medan pulsen pågår; Shellyn stänger själv när toggle_after går ut.
+  - id: heat_pulse
+    mode: restart
+    then:
+      - lambda: id(varme).publish_state(id(heat_s) > 0);
+      - delay: !lambda return id(heat_s) * 1000;
+      - lambda: id(varme).publish_state(false);
 
 number:
   - platform: template
@@ -150,6 +160,10 @@ switch:
     name: "Värmestyrning"
     optimistic: true
     restore_mode: RESTORE_DEFAULT_ON
+    on_turn_off:
+      - lambda: id(heat_s) = 0;
+      - script.execute: heat_pulse
+      - http_request.get: http://${shelly_ip}/rpc/Switch.Set?id=0&on=false
   - platform: template
     id: auto_mode
     name: "Automatisk styrning"
@@ -177,20 +191,33 @@ interval:
           float out = id(kp).state * err + id(integral);
           float d = out < 20.0f ? 0.0f : clamp(out, 25.0f, 80.0f);
           if (fabsf(d - id(duty_now)) >= 1.0f) id(set_mist)->execute(d);
-  # Termostat med ±0,5 °C. Skickar läget var 30:e s; Shellyn stänger själv efter 90 s.
-  - interval: 30s
+  # Värme med pulsbredd: var 10:e minut räknar en PI-regulator ut hur länge värmen
+  # ska gå, och Shellyn får "på, stäng själv efter X s". Frostvakten har några
+  # minuters eftersläpning, så korta pulser ger mycket mindre översläng än av/på.
+  - interval: 10min
     then:
       - lambda: |-
+          const float window = 600;  // s, fönstrets längd
+          const float max_duty = 0.8;  // 10 min full effekt från kallt gav 30 °C
           float t = id(temp_sensor).state;
-          if (isnan(t) || !id(heat_enable).state) id(heat_on) = false;
-          else if (t < id(target_temp).state - 0.5f) id(heat_on) = true;
-          else if (t > id(target_temp).state + 0.5f) id(heat_on) = false;
-          id(varme).publish_state(id(heat_on));
+          float duty = 0;
+          if (!isnan(t) && id(heat_enable).state) {
+            float err = id(target_temp).state - t;
+            float i = clamp(id(heat_i) + 0.02f * err, 0.0f, 1.0f);
+            if (0.1f * err + i < max_duty || err < 0) id(heat_i) = i;  // integrera inte upp mot taket
+            duty = clamp(0.1f * err + id(heat_i), 0.0f, max_duty);
+          }
+          float s = duty * window;
+          if (s < 30) s = 0;  // kortare pulser gör ingen nytta
+          id(heat_s) = s;
+          ESP_LOGI("varme", "T=%.2f puls %.0f s (I=%.2f)", t, s, id(heat_i));
+      - script.execute: heat_pulse
       - if:
           condition:
-            lambda: return id(heat_on);
+            lambda: return id(heat_s) > 0;
           then:
-            - http_request.get: http://${shelly_ip}/rpc/Switch.Set?id=0&on=true&toggle_after=90
+            - http_request.get: !lambda |-
+                return "http://${shelly_ip}/rpc/Switch.Set?id=0&on=true&toggle_after=" + to_string((int) id(heat_s));
           else:
             - http_request.get: http://${shelly_ip}/rpc/Switch.Set?id=0&on=false
 
