@@ -212,7 +212,8 @@ De första fyra timmarna med pulsstyrning höll tältet 24,6–25,5 °C, i medel
 25,0 °C.
 
 Ställ frostvaktens egen termostat på max, och se till att Shellyn är av efter
-strömavbrott.
+strömavbrott och inte har några egna scheman. Ett gammalt schema som slog på
+klockan 08 gav mig 27 °C varje morgon.
 
 ## Kända begränsningar
 
