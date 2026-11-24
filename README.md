@@ -4,7 +4,8 @@ Här byter jag styrkortet i en ultraljudsluftfuktare från Jula mot en ESP8266
 (NodeMCU) med [ESPHome](https://esphome.io). Den står i ett odlingstält för svamp
 och håller både luftfuktighet och temperatur.
 
-<!-- TODO Jonas: modellnamn och artikelnummer från Jula -->
+Modellen är Julas [Luftfuktare 22 W 5,28 l](https://www.jula.se/catalog/bygg-och-farg/varme-och-ventilation/luftforbattring/luftfuktare/luftfuktare-014756/),
+art.nr 014756, med 4,5 liters tank och 220 ml/h.
 
 Originalet har tre fasta lägen och startar inte igen efter ett strömavbrott. Med
 ESP:n:
