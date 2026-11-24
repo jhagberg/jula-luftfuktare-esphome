@@ -59,7 +59,7 @@ linjärregulator och seriemotstånd), så ESP:n får ström från en egen buck p
 | Stripboard (veroboard) | Cirka 19 × 24 hål räcker |
 | 4-polig flygplanskontakt, GX12 | Så att givaren kan kopplas loss. Jag köpte [ett 5-pack på Amazon](https://www.amazon.se/dp/B09WY7KFB6) |
 | Kopplingstråd, krympslang, dubbelhäftande skumtejp | Skumtejpen isolerar bucken mot kortet |
-| Shelly Plug S Gen3 + värmare | Valfritt, för värmen |
+| Shelly Plug S Gen3 + värmare | Valfritt, för värmen. Jag använder Biltemas [Frostvakt 200 W](https://www.biltema.se/bygg/byggflaktar/frostvakt-200-w-ip24-2000063940) |
 
 Den 5-poliga kontakten löder jag loss från originalkortet, så kabeln i
 luftfuktaren kan sitta kvar orörd.
@@ -109,12 +109,15 @@ IN− och OUT− hänger redan ihop på modulen.
 
 Givaren sitter på en 4-polig flygplanskontakt.
 
-| Tråd | Signal | NodeMCU | Stift i kontakten |
+| Stift | Signal | Tråd | NodeMCU |
 |---|---|---|---|
-| Röd | VCC | 3V | <!-- TODO Jonas --> |
-| Svart | GND | G | |
-| Grön | SDA | D6 | |
-| Gul | SCL | D5 | |
+| 1 | GND | Svart | G |
+| 2 | VCC | Röd | 3V |
+| 3 | SDA | Grön | D6 |
+| 4 | SCL | Gul | D5 |
+
+Ordningen är samma som i Qwiic/STEMMA QT, som många I2C-givare använder.
+Numren brukar stå i plasten vid stiften.
 
 Färgerna skiljer mellan tillverkare. Byter du plats på SDA och SCL händer inget
 farligt, givaren svarar bara inte. Koppla VCC till **3V** och inte VIN, annars
