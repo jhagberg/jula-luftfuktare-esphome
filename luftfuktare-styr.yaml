@@ -2,7 +2,7 @@
 # D1 -> PWM (direkt), D7 -> 470 ohm -> FAN, A0 <- KS (22k + 18k-delare),
 # SHT45 på I2C (SDA D6, SCL D5). Ström: buck 24V -> 5V till VIN.
 substitutions:
-  shelly_ip: 192.168.1.50  # Shelly Plug S Gen3 för värmen; ge den fast IP
+  shelly_ip: !secret shelly_ip  # Shelly Plug S Gen3 för värmen; ge den fast IP
 
 esphome:
   name: luftfuktare

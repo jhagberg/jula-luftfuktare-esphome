@@ -126,12 +126,11 @@ dras I2C-ledningarna upp till 5 V mot ESP:n.
 ## Flasha
 
 ```bash
-cp secrets.example.yaml secrets.yaml   # fyll i wifi och nya nycklar
+cp secrets.example.yaml secrets.yaml   # fyll i wifi, nya nycklar och Shellyns IP
 uvx esphome run luftfuktare-styr.yaml  # första gången via USB, sedan via wifi
 ```
 
-Ändra `shelly_ip` överst i `luftfuktare-styr.yaml` till din Shelly och ge den
-fast IP i routern.
+Ge Shellyn fast IP i routern.
 
 ## I Home Assistant
 
