@@ -226,6 +226,12 @@ klockan 08 gav mig 27 °C varje morgon.
 - Tom tank märks först efter en provkörning på högst 3 sekunder.
 - Inställningarna sparas i flash med upp till en minuts fördröjning.
 
+## Att göra
+
+- CO2-mätare i tältet
+- Styra fläkt och lampa på/av via en Shelly med två utgångar, lampan på
+  schema
+
 ## Licens
 
 MIT, se [LICENSE](LICENSE).
