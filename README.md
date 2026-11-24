@@ -57,7 +57,7 @@ linjärregulator och seriemotstånd), så ESP:n får ström från en egen buck p
 | 470 Ω | FAN-utgången (märkt 471) |
 | 22 kΩ + 18 kΩ + 100 nF | Spänningsdelare och filter för KS |
 | Stripboard (veroboard) | Cirka 19 × 24 hål räcker |
-| 4-polig flygplanskontakt | Så att givaren kan kopplas loss |
+| 4-polig flygplanskontakt, GX12 | Så att givaren kan kopplas loss. Jag köpte [ett 5-pack på Amazon](https://www.amazon.se/dp/B09WY7KFB6) |
 | Kopplingstråd, krympslang, dubbelhäftande skumtejp | Skumtejpen isolerar bucken mot kortet |
 | Shelly Plug S Gen3 + värmare | Valfritt, för värmen |
 
